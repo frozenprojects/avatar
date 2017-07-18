@@ -1,6 +1,7 @@
 package sources
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -17,11 +18,10 @@ type Gravatar struct {
 }
 
 // GetAvatar returns the Gravatar image for a user (if available).
-func (source *Gravatar) GetAvatar(user *arn.User) *avatar.Avatar {
+func (source *Gravatar) GetAvatar(user *arn.User) (*avatar.Avatar, error) {
 	// If the user has no Email registered we can't get a Gravatar.
 	if user.Email == "" {
-		// gravatarLog.Error(user.Nick, "No Email")
-		return nil
+		return nil, errors.New("No Email")
 	}
 
 	// Build URL

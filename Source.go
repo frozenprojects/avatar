@@ -6,5 +6,5 @@ import (
 
 // Source describes a source where we can find avatar images for a user.
 type Source interface {
-	GetAvatar(*arn.User) *Avatar
+	GetAvatar(*arn.User) (*Avatar, error)
 }

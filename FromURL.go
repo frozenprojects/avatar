@@ -50,11 +50,11 @@ func ImageFromURL(url string) (img image.Image, data []byte, format string, err 
 }
 
 // FromURL downloads and decodes the image from an URL and creates an Avatar.
-func FromURL(url string, user *arn.User) *Avatar {
+func FromURL(url string, user *arn.User) (*Avatar, error) {
 	img, data, format, err := ImageFromURL(url)
 
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	return &Avatar{
@@ -62,5 +62,5 @@ func FromURL(url string, user *arn.User) *Avatar {
 		Image:  img,
 		Data:   data,
 		Format: format,
-	}
+	}, nil
 }
