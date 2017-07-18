@@ -26,6 +26,9 @@ var avatarSources = []avatar.Source{
 		Rating:         "pg",
 		RequestLimiter: time.NewTicker(100 * time.Millisecond),
 	},
+	&sources.AniList{
+		RequestLimiter: time.NewTicker(250 * time.Millisecond),
+	},
 	&sources.MyAnimeList{
 		RequestLimiter: time.NewTicker(250 * time.Millisecond),
 	},

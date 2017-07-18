@@ -28,6 +28,9 @@ func (source *MyAnimeList) GetAvatar(user *arn.User) (*avatar.Avatar, error) {
 		return nil, errors.New("No MAL nick")
 	}
 
+	// Wait for request limiter to allow us to send a request
+	<-source.RequestLimiter.C
+
 	// Download user info
 	userInfoURL := "https://myanimelist.net/malappinfo.php?u=" + malNick
 	response, xml, networkErrs := gorequest.New().Get(userInfoURL).End()
@@ -49,9 +52,6 @@ func (source *MyAnimeList) GetAvatar(user *arn.User) (*avatar.Avatar, error) {
 
 	malID := matches[1]
 	malAvatarURL := "https://myanimelist.cdn-dena.com/images/userimages/" + malID + ".jpg"
-
-	// Wait for request limiter to allow us to send a request
-	<-source.RequestLimiter.C
 
 	// Download
 	return avatar.FromURL(malAvatarURL, user)
