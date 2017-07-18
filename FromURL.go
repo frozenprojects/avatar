@@ -2,8 +2,10 @@ package avatar
 
 import (
 	"bytes"
+	"errors"
 	"image"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -11,15 +13,14 @@ import (
 	"github.com/parnurzeal/gorequest"
 )
 
-// FromURL downloads and decodes the image from an URL and creates an Avatar.
-func FromURL(url string, user *arn.User) *Avatar {
+// ImageFromURL ...
+func ImageFromURL(url string) (img image.Image, data []byte, format string, err error) {
 	// Download
 	response, data, networkErrs := gorequest.New().Get(url).EndBytes()
 
 	// Network errors
 	if len(networkErrs) > 0 {
-		// netLog.Error(user.Nick, url, networkErrs[0])
-		return nil
+		return nil, nil, "", networkErrs[0]
 	}
 
 	// Retry HTTP only version after 5 seconds if service unavailable
@@ -30,21 +31,29 @@ func FromURL(url string, user *arn.User) *Avatar {
 
 	// Network errors on 2nd try
 	if len(networkErrs) > 0 {
-		// netLog.Error(user.Nick, url, networkErrs[0])
-		return nil
+		return nil, nil, "", networkErrs[0]
 	}
 
 	// Bad status codes
 	if response.StatusCode != http.StatusOK {
-		// netLog.Error(user.Nick, url, response.StatusCode)
-		return nil
+		return nil, nil, "", errors.New("Unexpected status code: " + strconv.Itoa(response.StatusCode))
 	}
 
 	// Decode
 	img, format, decodeErr := image.Decode(bytes.NewReader(data))
 
 	if decodeErr != nil {
-		// netLog.Error(user.Nick, url, decodeErr)
+		return nil, nil, "", decodeErr
+	}
+
+	return img, data, format, nil
+}
+
+// FromURL downloads and decodes the image from an URL and creates an Avatar.
+func FromURL(url string, user *arn.User) *Avatar {
+	img, data, format, err := ImageFromURL(url)
+
+	if err != nil {
 		return nil
 	}
 
