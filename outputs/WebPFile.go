@@ -1,7 +1,8 @@
 package outputs
 
 import (
-	"github.com/animenotifier/arn"
+	"errors"
+
 	"github.com/animenotifier/avatar"
 	"github.com/nfnt/resize"
 )
@@ -23,6 +24,7 @@ func (output *WebPFile) SaveAvatar(avatar *avatar.Avatar) error {
 	}
 
 	// Write to file
-	fileName := output.Directory + avatar.User.ID + ".webp"
-	return arn.SaveWebP(img, fileName, output.Quality)
+	// fileName := output.Directory + avatar.User.ID + ".webp"
+	return errors.New("This lib is deprecated")
+	// return arn.SaveWebP(img, fileName, output.Quality)
 }
